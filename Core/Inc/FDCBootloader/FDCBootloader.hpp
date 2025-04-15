@@ -49,7 +49,7 @@ private:
 
 public:
 
-	static void set_up(FDCAN::Peripheral& fdcan);
+	static void set_up(uint8_t fdcan);
 
 	static bool get_version(uint8_t& version);
 

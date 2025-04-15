@@ -14,6 +14,7 @@
 #include "BLCU_SetUps/BLCU_SetUps.hpp"
 #include "BLCU_Starts/BLCU_Starts.hpp"
 #include "BLCU_StateMachine/BLCU_StateMachine.hpp"
+#include "FDCBootloader/BootloaderTFTP.hpp"
 
 namespace BLCU{
 

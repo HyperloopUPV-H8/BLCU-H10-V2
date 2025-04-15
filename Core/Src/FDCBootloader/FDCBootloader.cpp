@@ -11,9 +11,8 @@ uint8_t FDCB::fdcan = 0;
 bool FDCB::ready = false;
 
 
-void FDCB::set_up(FDCAN::Peripheral&  fdcan){
-
-	FDCB::fdcan = FDCAN::inscribe(fdcan);
+void FDCB::set_up(uint8_t fdcan){
+	FDCB::fdcan = fdcan;
 	FDCB::ready = true;
 }
 

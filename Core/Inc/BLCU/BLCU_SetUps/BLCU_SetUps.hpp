@@ -12,9 +12,14 @@ namespace BLCU{
 		BLCU::__set_up_leds();
 	}
 
-   void __set_up_fdcan(){
-	   BLCU::fdcan = FDCAN::inscribe(FDCAN::fdcan1);
-   }
+	void __set_up_fdcan(){
+		BLCU::fdcan = FDCAN::inscribe<
+			CANBitRatesSpeed::CAN_1_Mbit,    
+			CANFormat::CAN_FDCAN_FORMAT,                
+			CANIdentifier::CAN_29_BIT_IDENTIFIER,      
+			CANMode::CAN_MODE_NORMAL               
+		>(FDCAN::fdcan1);
+	}
 
 
    void __set_up_ethernet(){

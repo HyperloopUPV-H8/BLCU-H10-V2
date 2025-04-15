@@ -4,7 +4,7 @@
 
 namespace BLCU{
 	void __set_up_protections(){
-		ProtectionManager::_add_protection(&BLCU::programming_error, Boundary<bool, NOT_EQUALS>(false));
+		//ProtectionManager::_add_protection(&BLCU::programming_error, Boundary<bool, NOT_EQUALS>(0));
 	 }
 
 
