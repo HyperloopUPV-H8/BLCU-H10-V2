@@ -32,10 +32,10 @@ class Bootloader:
                 return self.fdcan_error.FDCAN_ERROR
             return self.fdcan_error.FDCAN_OK
         
-        def fdcan_read(self)->fdcan_error:
+        def fdcan_read(self):
             packet = self._fdcan.read()
             if packet == None:
-                return self.fdcan_error.FDCAN_EMPTY
+                return None,self.fdcan_error.FDCAN_EMPTY
             return packet,self.fdcan_error.FDCAN_OK
     
     class flash:
@@ -259,8 +259,6 @@ class Bootloader:
         if result != self.bootloader_error_t.BOOTLOADER_OK:
             return self.bootloader_error_t.BOOTLOADER_ERROR
         
-        aux_packet = self.fdcan.fdcan_read()
-        
         if aux_packet.identifier != order:
             return self.bootloader_error_t.BOOTLOADER_ERROR
         
@@ -317,9 +315,9 @@ class Bootloader:
             return
         
         for i in range(0, self.flash.SECTOR_SIZE_IN_32BITS_WORDS, 16):
-            packet,boolean = self.__b_wait_until_fdcan_message_received()
+            packet,result = self.__b_wait_until_fdcan_message_received()
             
-            if  boolean != self.fdcan.fdcan_error.FDCAN_OK:
+            if  result != self.fdcan.fdcan_error.FDCAN_OK:
                 packet =self.__b_send_nack(packet)
                 return
             
