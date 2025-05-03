@@ -4,6 +4,7 @@ project (template-project ASM C CXX)
 set(EXECUTABLE ${PROJECT_NAME}.elf)
 set(STLIB_DIR ${CMAKE_CURRENT_LIST_DIR}/deps/ST-LIB)
 
+include_directories(${CMAKE_SOURCE_DIR}/deps/lib-tftp-server/src)
 
 add_custom_target(
     my_custom_target_that_always_runs ALL

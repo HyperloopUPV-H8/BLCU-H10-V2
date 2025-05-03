@@ -10,7 +10,12 @@
 #pragma once
 
 #include "C++Utilities/CppUtils.hpp"
+#ifndef SIM_ON
 #include "lwip/apps/tftp_server.h"
+#else
+#include <boost/asio.hpp>
+#include <tftp/server.hpp>
+#endif
 #include "ErrorHandler/ErrorHandler.hpp"
 #include "FDCBootloader/FDCBootloader.hpp"
 #include "ST-LIB.hpp"
