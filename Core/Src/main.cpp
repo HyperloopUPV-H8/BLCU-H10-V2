@@ -52,14 +52,21 @@ int main(void) {
         BLCU::reset_all,
         &BLCU::orders_data.target,
     };
+    DigitalOutput BootPCU(PE7);
+    DigitalOutput NReset(PG1);
 
     BLCU::set_up();
     BLCU::start();
-    printf("\n\n\n\n\n\n");
-    printf("BLCU fully initiated!\n");
 
     BLCU::orders_data.target = BLCU::Target::PCU;
-    BLCU::read_program();
+    BLCU::write_program();
+    
+    BootPCU.turn_on();
+    NReset.turn_off();
+    HAL_Delay(100);
+    NReset.turn_on();
+    HAL_Delay(100);
+    BootPCU.turn_off();
 
 
     while (1) {

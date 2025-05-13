@@ -50,6 +50,7 @@ void BTFTP::start(){
 		ErrorHandler("BLCU could not allocate enough memory for tftp file buffer");
 		return;
 	}
+	BTFTP::on(BTFTP::Mode::WRITE);
 
 	//TODO: Remove debug print
 	printf("Servidor tftp inciado con éxito! Error code: %u\n", error);

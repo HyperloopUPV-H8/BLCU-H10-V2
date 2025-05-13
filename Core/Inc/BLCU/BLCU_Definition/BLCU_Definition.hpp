@@ -5,7 +5,7 @@
 #include "FDCBootloader/BootloaderTFTP.hpp"
 #include "BLCU/Utilities/orders_data.hpp"
 
-#define BLCU_IP 		"192.168.1.7"
+#define BLCU_IP 		"192.168.0.27"
 #define BLCU_MASK 		"255.255.0.0"
 #define BLCU_GATEWAY 	"192.168.1.1"
 #define BLCU_PORT		((uint32_t)50500)
