@@ -17,7 +17,7 @@ namespace BLCU{
 			CANBitRatesSpeed::CAN_1_Mbit,    
 			CANFormat::CAN_FDCAN_FORMAT,                
 			CANIdentifier::CAN_29_BIT_IDENTIFIER,      
-			CANMode::CAN_MODE_LOOPBACK              
+			CANMode::CAN_MODE_NORMAL              
 		>(FDCAN::fdcan1);
 	}
 

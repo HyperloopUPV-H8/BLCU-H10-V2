@@ -58,8 +58,13 @@ int main(void) {
     BLCU::set_up();
     BLCU::start();
 
+    // BootPCU.turn_off();
+    // HAL_Delay(100);
+    // NReset.turn_on();
     BLCU::orders_data.target = BLCU::Target::PCU;
     BLCU::write_program();
+
+    
     
     BootPCU.turn_on();
     NReset.turn_off();
