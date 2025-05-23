@@ -147,7 +147,7 @@ int BTFTP::write(void* handle, struct pbuf* p){
 		if (btftp_handle->current_sector > 5) {
 			return 1;
 		}else{
-			if (not FDCB::write_memory(btftp_handle->current_sector, btftp_handle->file->payload)) {
+			if (not FDCB::write_memory(btftp_handle->current_sector, btftp_handle->file->payload,(btftp_handle->file->pointer))) {
 				error_ok = false;
 				return -1;
 			}
@@ -157,14 +157,24 @@ int BTFTP::write(void* handle, struct pbuf* p){
 	}
 
 	memcpy(&btftp_handle->file->payload[btftp_handle->file->pointer], (uint8_t*)p->payload, p->len);
-	btftp_handle->file->pointer += TFTP_MAX_DATA_SIZE;
 
 	if (p->len < TFTP_MAX_DATA_SIZE) {
-		if (not FDCB::write_memory(btftp_handle->current_sector, btftp_handle->file->payload)) {
+		if(p->len == 0){
+			return 0;
+		}
+		uint32_t add_amount = 64-(p->len%64);
+		btftp_handle->file->pointer += (p->len + add_amount);
+		for(uint32_t i = p->len; i < add_amount; i++){
+			btftp_handle->file->payload[btftp_handle->file->pointer] = 255;
+			btftp_handle->file->pointer++;
+		}
+		if (not FDCB::write_memory(btftp_handle->current_sector, btftp_handle->file->payload,btftp_handle->file->pointer)) {
 			error_ok = false;
 			return -1;
 		}
 		return 0;
+	}else{
+		btftp_handle->file->pointer += TFTP_MAX_DATA_SIZE;
 	}
 
 	return 1;

@@ -57,6 +57,8 @@ int main(void) {
 
     BLCU::set_up();
     BLCU::start();
+    // RCC_ClocksTypeDef RCC_Clocks;
+    // HAL_RCC_GetClockConfig()
 
     // BootPCU.turn_off();
     // HAL_Delay(100);
