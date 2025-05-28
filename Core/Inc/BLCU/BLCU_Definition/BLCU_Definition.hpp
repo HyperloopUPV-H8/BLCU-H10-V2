@@ -33,7 +33,7 @@ namespace BLCU {
     StateMachine specific_state_machine;
     StateMachine general_state_machine;
 
-    unordered_map<Target, DigitalOutput> resets;
+    unordered_map<Target, DigitalOutput> resets; 
     unordered_map<Target, DigitalOutput> boots;
 
     uint8_t fdcan;
@@ -75,6 +75,7 @@ namespace BLCU {
     void finish_write_read_order(bool error_ok);
     void __end_booting();
     void __abort_booting();
+    void __finish_booting();
     void __send_to_bootmode(const BLCU::Target& target);
     void __turn_off_all_boards();
 

@@ -169,6 +169,7 @@ int BTFTP::write(void* handle, struct pbuf* p){
 			error_ok = false;
 			return -1;
 		}
+		//Deberia de cambiar de estado aqui, para quitar de boot a la otra pagina
 		return 0;
 	}else{
 		btftp_handle->file->pointer += TFTP_MAX_DATA_SIZE;
