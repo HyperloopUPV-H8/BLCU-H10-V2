@@ -24,6 +24,7 @@ HeapOrder get_version_order = {
     &BLCU::orders_data.version,
 };
 
+
 int main(void) {
 #ifdef SIM_ON
     SharedMemory::start();
@@ -47,6 +48,8 @@ int main(void) {
         &BLCU::orders_data.target,
     };
 
+    
+
     HeapOrder reset_all_order = {
         704,
         BLCU::reset_all,
@@ -63,8 +66,8 @@ int main(void) {
     // BootPCU.turn_off();
     // HAL_Delay(100);
     // NReset.turn_on();
-    BLCU::orders_data.target = BLCU::Target::PCU;
-    BLCU::write_program();
+    // BLCU::orders_data.target = BLCU::Target::PCU;
+    //  BLCU::write_program();
 
     
     

@@ -159,9 +159,6 @@ int BTFTP::write(void* handle, struct pbuf* p){
 	memcpy(&btftp_handle->file->payload[btftp_handle->file->pointer], (uint8_t*)p->payload, p->len);
 
 	if (p->len < TFTP_MAX_DATA_SIZE) {
-		if(p->len == 0){
-			return 0;
-		}
 		uint32_t add_amount = 64-(p->len%64);
 		btftp_handle->file->pointer += (p->len + add_amount);
 		for(uint32_t i = p->len; i < add_amount; i++){
