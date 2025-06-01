@@ -56,7 +56,7 @@ public:
 	//Data tiene que tener 131072 bytes alocados
 	static bool read_memory(uint8_t sector, uint8_t* data);
 
-	static bool write_memory(uint8_t sector, uint8_t* data);
+	static bool write_memory(uint8_t sector, uint8_t* data, uint32_t max_pointer);
 
 	static bool erase_memory();
 

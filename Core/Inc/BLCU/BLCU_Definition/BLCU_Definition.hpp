@@ -5,7 +5,7 @@
 #include "FDCBootloader/BootloaderTFTP.hpp"
 #include "BLCU/Utilities/orders_data.hpp"
 
-#define BLCU_IP 		"192.168.1.7"
+#define BLCU_IP 		"192.168.0.27"
 #define BLCU_MASK 		"255.255.0.0"
 #define BLCU_GATEWAY 	"192.168.1.1"
 #define BLCU_PORT		((uint32_t)50500)
@@ -33,7 +33,7 @@ namespace BLCU {
     StateMachine specific_state_machine;
     StateMachine general_state_machine;
 
-    unordered_map<Target, DigitalOutput> resets;
+    unordered_map<Target, DigitalOutput> resets; 
     unordered_map<Target, DigitalOutput> boots;
 
     uint8_t fdcan;
@@ -75,6 +75,7 @@ namespace BLCU {
     void finish_write_read_order(bool error_ok);
     void __end_booting();
     void __abort_booting();
+    void __finish_booting();
     void __send_to_bootmode(const BLCU::Target& target);
     void __turn_off_all_boards();
 

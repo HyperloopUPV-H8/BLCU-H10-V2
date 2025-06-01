@@ -18,6 +18,10 @@
     "tuple": "cpp",
     "utility": "cpp",
     "variant": "cpp",
-    "atomic": "cpp"
+    "atomic": "cpp",
+    "fstream": "cpp",
+    "sstream": "cpp",
+    "regex": "cpp",
+    "ostream": "cpp"
   }
 }

@@ -190,11 +190,11 @@ PWMmap TimerPeripheral::available_pwm = {
     {PF2, {timer23, {TIM_CHANNEL_3, NORMAL}}},
     {PF3, {timer23, {TIM_CHANNEL_4, NORMAL}}},
     {PE5, {timer15, {TIM_CHANNEL_1, NORMAL}}},
-    {PE11, {timer1, {TIM_CHANNEL_2, NORMAL}}},
+    //{PE11, {timer1, {TIM_CHANNEL_2, NORMAL}}},
 };
 
 DualPWMmap TimerPeripheral::available_dual_pwms = {
-    {{PB8, PB6}, {timer16, {TIM_CHANNEL_1, NORMAL}}},
+    //{{PB8, PB6}, {timer16, {TIM_CHANNEL_1, NORMAL}}},
     {{PB9, PB7}, {timer17, {TIM_CHANNEL_1, PHASED}}},
     {{PE11, PE10}, {timer1, {TIM_CHANNEL_2, PHASED}}},
     {{PE13, PE12}, {timer1, {TIM_CHANNEL_3, PHASED}}},

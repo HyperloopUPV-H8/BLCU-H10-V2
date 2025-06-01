@@ -36,7 +36,7 @@ namespace BLCU{
 		}
 
 		BLCU::orders_data.version = temporal_value;
-		BLCU::tcp_socket->send_order(get_version_order);
+		BLCU::tcp_socket->send_order(ack);
 
 		__end_booting();
 	}

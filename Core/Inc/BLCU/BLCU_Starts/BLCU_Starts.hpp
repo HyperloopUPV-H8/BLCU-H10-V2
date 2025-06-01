@@ -4,7 +4,7 @@
 
 namespace BLCU{
     void __tcp_start(){
-        BLCU::tcp_socket = new ServerSocket(BLCU::ip, BLCU::port);
+        BLCU::tcp_socket = new ServerSocket(BLCU::ip, BLCU::port,1000,500,10);
     }
 
     void __resets_start(){

@@ -7,9 +7,9 @@ namespace BLCU{
 	void __set_up_peripherals(){
 		BLCU::__set_up_fdcan();
 		BLCU::__set_up_ethernet();
-		BLCU::__set_up_resets();
-		BLCU::__set_up_boots();
-		BLCU::__set_up_leds();
+		//BLCU::__set_up_resets();
+		//BLCU::__set_up_boots();
+		//BLCU::__set_up_leds();
 	}
 
 	void __set_up_fdcan(){
@@ -17,7 +17,7 @@ namespace BLCU{
 			CANBitRatesSpeed::CAN_1_Mbit,    
 			CANFormat::CAN_FDCAN_FORMAT,                
 			CANIdentifier::CAN_29_BIT_IDENTIFIER,      
-			CANMode::CAN_MODE_NORMAL               
+			CANMode::CAN_MODE_NORMAL              
 		>(FDCAN::fdcan1);
 	}
 
@@ -29,23 +29,23 @@ namespace BLCU{
 		BLCU::port = BLCU_PORT;
    }
 
-   void __set_up_resets(){
-		BLCU::resets[VCU] = DigitalOutput(PA12);
-		BLCU::resets[OBCCU] = DigitalOutput(PG3);
-		BLCU::resets[BMSA] = DigitalOutput(PD11);
-		BLCU::resets[LCUM] = DigitalOutput(PD9);
-		BLCU::resets[LCUS] = DigitalOutput(PB12);
-		BLCU::resets[PCU] = DigitalOutput(PG1);
-   }
+//    void __set_up_resets(){
+// 		BLCU::resets[VCU] = DigitalOutput(PA12);
+// 		BLCU::resets[OBCCU] = DigitalOutput(PG3);
+// 		BLCU::resets[BMSA] = DigitalOutput(PD11);
+// 		BLCU::resets[LCUM] = DigitalOutput(PD9);
+// 		BLCU::resets[LCUS] = DigitalOutput(PB12);
+// 		BLCU::resets[PCU] = DigitalOutput(PG1);
+//    }
 
-   void __set_up_boots(){
-		BLCU::boots[VCU] = DigitalOutput(PA11);
-		BLCU::boots[OBCCU] = DigitalOutput(PG2);
-		BLCU::boots[BMSA] = DigitalOutput(PD10);
-		BLCU::boots[LCUM] = DigitalOutput(PD8);
-		BLCU::boots[LCUS] = DigitalOutput(PE15);
-		BLCU::boots[PCU] = DigitalOutput(PE7);
-   }
+//    void __set_up_boots(){
+// 		BLCU::boots[VCU] = DigitalOutput(PA11);
+// 		BLCU::boots[OBCCU] = DigitalOutput(PG2);
+// 		BLCU::boots[BMSA] = DigitalOutput(PD10);
+// 		BLCU::boots[LCUM] = DigitalOutput(PD8);
+// 		BLCU::boots[LCUS] = DigitalOutput(PE15);
+// 		BLCU::boots[PCU] = DigitalOutput(PE7);
+//    }
 
    void __set_up_leds(){
 		BLCU::LED_OPERATIONAL = DigitalOutput(PG8);

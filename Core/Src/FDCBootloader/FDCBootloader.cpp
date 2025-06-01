@@ -18,8 +18,11 @@ void FDCB::set_up(uint8_t fdcan){
 
 bool FDCB::get_version(uint8_t& version){
 	vector<uint8_t> data = vector<uint8_t>(64);
+	for(int i = 0; i < 64; i++){
+		data.at(i) = 0xDE;
+	}
 	FDCAN::Packet packet = FDCAN::Packet();
-	version = 0;
+	// version = 0;
 	const char* data_ptr = reinterpret_cast<const char*>(data.data());  // Cast to const char*
 	if (not FDCAN::transmit(FDCB::fdcan, FDCB::GET_VERSION, data_ptr, FDCAN::DLC::BYTES_64)){
 		return false;
@@ -89,7 +92,7 @@ bool FDCB::read_memory(uint8_t sector, uint8_t* data){
 	return true;
 }
 
-bool FDCB::write_memory(uint8_t sector, uint8_t* data){
+bool FDCB::write_memory(uint8_t sector, uint8_t* data, uint32_t max_pointer){
 	vector<uint8_t> tx_data = vector<uint8_t>(64);
 	FDCAN::Packet packet = FDCAN::Packet();
 	packet.rx_data.fill(0);
@@ -97,8 +100,13 @@ bool FDCB::write_memory(uint8_t sector, uint8_t* data){
 	uint32_t index, counter;
 
 	tx_data.at(0) = sector;
+	tx_data.at(1) = max_pointer >> 24;
+	tx_data.at(2) = max_pointer >> 16;
+	tx_data.at(3) = max_pointer >> 8;
+	tx_data.at(4) = max_pointer;
 	const char* tx_data_ptr = reinterpret_cast<const char*>(tx_data.data());  // Cast to const char*
 	FDCAN::transmit(FDCB::fdcan, FDCB::WRITE_MEMORY, tx_data_ptr, FDCAN::DLC::BYTES_64);
+	uint32_t aux_max_pointer = max_pointer/64;
 
 	if (not __wait_for_ack(FDCB::WRITE_MEMORY, packet)) {
 		return false;
@@ -110,7 +118,7 @@ bool FDCB::write_memory(uint8_t sector, uint8_t* data){
 
 	index = 0;
 	counter = 1;
-	for (i = 0; i < 2048; ++i) {
+	for (i = 0; i < aux_max_pointer; ++i) {
 		memcpy(&tx_data[0], &data[index], 64);
 		if(not FDCAN::transmit(FDCB::fdcan, FDCB::WRITE_MEMORY, tx_data_ptr, FDCAN::DLC::BYTES_64)) {
 			return false;

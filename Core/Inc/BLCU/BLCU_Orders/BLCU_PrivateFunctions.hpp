@@ -10,16 +10,24 @@ namespace BLCU{
 			BLCU::tcp_socket->send_order(nack);
 			__abort_booting();
 			return;
-			}else{
-				BLCU::tcp_socket->send_order(ack);
-			}
+		}else{
+			BLCU::tcp_socket->send_order(ack);
+		}
 
 		__end_booting();
    }
 
    void __end_booting(){
+	   BLCU::__send_to_bootmode(BLCU::orders_data.target);
        BLCU::orders_data.clean_data();
        BLCU::specific_state_machine.force_change_state(SpecificStates::READY);
+
+	   
+   }
+
+   void __finish_booting(const BLCU::Target& target){
+		BLCU::resets[target].turn_off();
+		BLCU::resets[target].turn_on();
    }
 
    void __abort_booting(){
