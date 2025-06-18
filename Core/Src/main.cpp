@@ -71,12 +71,12 @@ int main(void) {
 
     
     
-    BootPCU.turn_on();
-    NReset.turn_off();
-    HAL_Delay(100);
-    NReset.turn_on();
-    HAL_Delay(100);
-    BootPCU.turn_off();
+    // BootPCU.turn_on();
+    // NReset.turn_off();
+    // HAL_Delay(100);
+    // NReset.turn_on();
+    // HAL_Delay(100);
+    // BootPCU.turn_off();
 
 
     while (1) {
