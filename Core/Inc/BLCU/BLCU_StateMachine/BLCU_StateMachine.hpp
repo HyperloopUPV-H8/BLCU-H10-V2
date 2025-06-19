@@ -83,6 +83,7 @@ namespace BLCU{
 		//Enter actions
 		BLCU::specific_state_machine.add_enter_action([&](){
 			BLCU::LED_OPERATIONAL.turn_on();
+			
 		}, SpecificStates::READY);
 
 		BLCU::specific_state_machine.add_enter_action([&](){

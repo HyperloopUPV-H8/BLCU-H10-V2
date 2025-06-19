@@ -29,23 +29,23 @@ namespace BLCU{
 		BLCU::port = BLCU_PORT;
    }
 
-//    void __set_up_resets(){
-// 		BLCU::resets[VCU] = DigitalOutput(PA12);
-// 		BLCU::resets[OBCCU] = DigitalOutput(PG3);
-// 		BLCU::resets[BMSA] = DigitalOutput(PD11);
-// 		BLCU::resets[LCUM] = DigitalOutput(PD9);
-// 		BLCU::resets[LCUS] = DigitalOutput(PB12);
-// 		BLCU::resets[PCU] = DigitalOutput(PG1);
-//    }
+   void __set_up_resets(){
+		BLCU::resets[VCU] = DigitalOutput(PA12);
+		BLCU::resets[HVSCU] = DigitalOutput(PG3);
+		BLCU::resets[BCU] = DigitalOutput(PD11);
+		BLCU::resets[BMSL] = DigitalOutput(PD9);
+		BLCU::resets[LCU] = DigitalOutput(PB12);
+		BLCU::resets[PCU] = DigitalOutput(PG1);
+   }
 
-//    void __set_up_boots(){
-// 		BLCU::boots[VCU] = DigitalOutput(PA11);
-// 		BLCU::boots[OBCCU] = DigitalOutput(PG2);
-// 		BLCU::boots[BMSA] = DigitalOutput(PD10);
-// 		BLCU::boots[LCUM] = DigitalOutput(PD8);
-// 		BLCU::boots[LCUS] = DigitalOutput(PE15);
-// 		BLCU::boots[PCU] = DigitalOutput(PE7);
-//    }
+   void __set_up_boots(){
+		BLCU::boots[VCU] = DigitalOutput(PA11);
+		BLCU::boots[HVSCU] = DigitalOutput(PG2);
+		BLCU::boots[BCU] = DigitalOutput(PD10);
+		BLCU::boots[BMSL] = DigitalOutput(PD8);
+		BLCU::boots[LCU] = DigitalOutput(PE15);
+		BLCU::boots[PCU] = DigitalOutput(PE7);
+   }
 
    void __set_up_leds(){
 		BLCU::LED_OPERATIONAL = DigitalOutput(PG8);
