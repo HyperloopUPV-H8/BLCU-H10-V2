@@ -14,21 +14,10 @@ namespace BLCU{
 			BLCU::tcp_socket->send_order(ack);
 		}
 
-		__end_booting();
+		BLCU::specific_state_machine.force_change_state(SpecificStates::READY);
    }
 
-   void __end_booting(){
-	   BLCU::__send_to_bootmode(BLCU::orders_data.target);
-       BLCU::orders_data.clean_data();
-       BLCU::specific_state_machine.force_change_state(SpecificStates::READY);
 
-	   
-   }
-
-   void __finish_booting(const BLCU::Target& target){
-		BLCU::resets[target].turn_off();
-		BLCU::resets[target].turn_on();
-   }
 
    void __abort_booting(){
 		BLCU::orders_data.clean_data();
@@ -47,6 +36,13 @@ namespace BLCU{
 		for (auto& [target, reset_pin]: BLCU::resets)
 		{
 			reset_pin.turn_off();
+		}
+   }
+
+   void __turn_on_all_boards(){
+		for (auto& [target, reset_pin]: BLCU::resets)
+		{
+			reset_pin.turn_on();
 		}
    }
 

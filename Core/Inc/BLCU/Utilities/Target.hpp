@@ -2,16 +2,16 @@
 namespace BLCU{
 
 /* enumeration of all possible boot targets
- * Micro-Fit 1 is the closest to the LAN adapter */
+ */
 
 	enum Target{
 		NOTARGET,
-		VCU,			//Micro-Fit 1
-		OBCCU,			//			2
-		BMSA,			//			3
-		LCUM,			//			4
-		LCUS,			//			5
-		PCU,			//Micro-Fit 6
+		VCU,			//		    1
+		HVSCU,			//			2
+		BCU,			//			3
+		BMSL,			//			4
+		LCU,			//			5
+		PCU,			//          6
 		
 	};
 }
