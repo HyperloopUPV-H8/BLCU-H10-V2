@@ -38,7 +38,7 @@ namespace BLCU{
 		BLCU::orders_data.version = temporal_value;
 		BLCU::tcp_socket->send_order(ack);
 
-		__end_booting();
+		BLCU::specific_state_machine.force_change_state(SpecificStates::READY);
 	}
 
 	void read_program(){
@@ -89,7 +89,7 @@ namespace BLCU{
 			BLCU::tcp_socket->send_order(ack);
 		}
 
-		__end_booting();
+		BLCU::specific_state_machine.force_change_state(SpecificStates::READY);
 	}
 
 }
