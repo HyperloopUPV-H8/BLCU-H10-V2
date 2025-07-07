@@ -82,6 +82,7 @@ namespace BLCU{
 
 		//Enter actions
 		BLCU::specific_state_machine.add_enter_action([&](){
+			BLCU::boots[BLCU::orders_data.target].turn_off();
 			BLCU::resets[BLCU::orders_data.target].turn_off();
 			BLCU::__turn_on_all_boards();
 			BLCU::orders_data.clean_data();

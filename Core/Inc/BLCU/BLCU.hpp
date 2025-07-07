@@ -27,7 +27,7 @@ namespace BLCU{
     }
 
     void start(){
-        STLIB::start("00:80:e1:00:00:00",ip, mask, gateway, UART::uart2);
+        STLIB::start("00:80:e1:06:07:10",ip, mask, gateway, UART::uart2);
         BLCU::__tcp_start();
         BTFTP::start();
 

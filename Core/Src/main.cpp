@@ -36,17 +36,17 @@ int main(void) {
         &BLCU::orders_data.target,
     };
 
-    HeapOrder read_program_order = {
-        701,
-        BLCU::read_program,
-        &BLCU::orders_data.target,
-    };
+    // HeapOrder read_program_order = {
+    //     701,
+    //     BLCU::read_program,
+    //     &BLCU::orders_data.target,
+    // };
 
-    HeapOrder erase_program_order = {
-        702,
-        BLCU::erase_program,
-        &BLCU::orders_data.target,
-    };
+    // HeapOrder erase_program_order = {
+    //     702,
+    //     BLCU::erase_program,
+    //     &BLCU::orders_data.target,
+    // };
 
     
 
