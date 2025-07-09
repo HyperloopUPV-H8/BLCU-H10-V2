@@ -17,12 +17,12 @@ HeapOrder nack = {
     4,
 };
 
-HeapOrder get_version_order = {
-    703,
-    BLCU::get_version,
-    &BLCU::orders_data.target,
-    &BLCU::orders_data.version,
-};
+// HeapOrder get_version_order = {
+//     703,
+//     BLCU::get_version,
+//     &BLCU::orders_data.target,
+//     &BLCU::orders_data.version,
+// };
 
 
 int main(void) {
