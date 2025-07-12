@@ -5,6 +5,9 @@ class BLCU;
 
 class Comms{
 private:
+    static Comms* self; 
+    static void cb_write_program();    
+    static void cb_reset_all();
     BLCU* board=nullptr;
     HeapOrder* write_program_order=nullptr;
     HeapOrder*  reset_all_order=nullptr;
