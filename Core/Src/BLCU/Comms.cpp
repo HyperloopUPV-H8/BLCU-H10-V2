@@ -2,21 +2,18 @@
 #include "BLCU/BLCU.hpp" 
 
 
+Comms* Comms::self = nullptr;
 
 Comms::Comms(BLCU* board): board(board){
+    self = this;
     tcp_socket = new ServerSocket(board->ip, board->port,1000,500,10);
-    write_program_order = new HeapOrder{
-        700,
-        write_program,
-        &board->current_target,
-    };
-    
-    reset_all_order = new HeapOrder{
-        704,
-        reset_all
-    };
+    write_program_order = new HeapOrder(700, cb_write_program, &board->current_target);
+    reset_all_order   = new HeapOrder(704, cb_reset_all);
 
 }
+
+void Comms::cb_write_program() { self->write_program(); }
+void Comms::cb_reset_all()     { self->reset_all(); }
 
 void Comms::read_program(){
     if(board->specific_state_machine.current_state != board->SpecificStates::READY){
@@ -77,5 +74,9 @@ void Comms::get_version(){
     tcp_socket->send_order(ack);
 
     board->specific_state_machine.force_change_state(board->SpecificStates::READY);
+}
+
+void Comms::reset_all() {
+    board->reset_all();
 }
 
