@@ -7,16 +7,90 @@
 
 #pragma once
 
-#include "BLCU_Orders/BLCU_Orders.hpp"
-#include "BLCU_Orders/BLCU_PrivateFunctions.hpp"
-#include "BLCU_Orders/BLCU_PublicFunctions.hpp"
-#include "BLCU_Protections/BLCU_Protections.hpp"
-#include "BLCU_SetUps/BLCU_SetUps.hpp"
-#include "BLCU_Starts/BLCU_Starts.hpp"
-#include "BLCU_StateMachine/BLCU_StateMachine.hpp"
+#include "ST-LIB.hpp"
+#include "FDCBootloader/FDCBootloader.hpp"
 #include "FDCBootloader/BootloaderTFTP.hpp"
 
-namespace BLCU{
+#define BLCU_ID         ((uint8_t)1)
+
+    enum Target{
+		NOTARGET,
+		VCU,			//		    1
+		HVSCU,			//			2
+		BCU,			//			3
+		BMSL,			//			4
+		LCU,			//			5
+		PCU,			//          6
+		
+	};
+    class BLCU{
+        private:
+
+        enum GeneralStates{
+            INITIAL,
+            OPERATIONAL,
+            FAULT,
+        };
+    
+    
+        enum SpecificStates{
+            READY,
+            BOOTING,
+        };
+    
+        static constexpr uint16_t max_tcp_connection_timeout = 30000;
+
+        StateMachine general_state_machine;
+        StateMachine specific_state_machine;
+    
+        unordered_map<Target, DigitalOutput> resets; 
+        unordered_map<Target, DigitalOutput> boots;
+
+        uint8_t fdcan;
+        DigitalOutput LED_OPERATIONAL;
+        DigitalOutput LED_FAULT;
+        DigitalOutput LED_CAN;
+        DigitalOutput LED_FLASH;
+        DigitalOutput LED_SLEEP;
+
+        static constexpr string ip{"192.168.0.27"};
+        static constexpr string mask{"255.255.0.0"}; 
+        static constexpr string gateway{"192.168.1.1"};
+        static constexpr uint32_t port{50500};
+        static ServerSocket* tcp_socket;//Hacer nullptr
+        bool tcp_timeout = false;
+
+        bool programming_error = false;
+
+        void finish_write_read_order(bool error_ok);
+        void abort_booting();
+        void turn_off_all_boards();
+        void turn_on_all_boards();
+        void send_to_bootmode();
+        void stop_booting();
+
+
+        void setup_state_machine();
+        void setup_specific_state_machine();
+
+
+        public:
+
+        BLCU();
+        void init();
+        void update();
+
+        //PUBLIC VARIABLES:
+        Target current_target;
+
+        //ORDER FUNCTIONS:
+        void read_program();
+        void reset_all();
+        void get_version();
+        void write_program();
+        void erase_program();
+
+    };
 
     void set_up()
     {
@@ -40,4 +114,3 @@ namespace BLCU{
         STLIB::update();
     }
 
-}
