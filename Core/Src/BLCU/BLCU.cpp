@@ -6,10 +6,11 @@ BLCU::BLCU(){
     setup_state_machine();
 	setup_specific_state_machine();
 	general_state_machine.add_state_machine(specific_state_machine, GeneralStates::OPERATIONAL);
+	ProtectionManager::link_state_machine(BLCU::general_state_machine, BLCU_ID);
 	Time::register_low_precision_alarm(1, [&](){
 		general_state_machine.check_transitions();
 	});
-	
+
 //-------FDCAN------//
 	fdcan = FDCAN::inscribe<
 			CANBitRatesSpeed::CAN_1_Mbit,    
@@ -46,7 +47,11 @@ BLCU::BLCU(){
 }
 
 void BLCU::init(){
-	STLIB::start();//TODO
+	STLIB::start("00:80:e1:06:07:10",ip, mask, gateway, UART::uart2);
+
+	tcp = new Comms(this);
+	BTFTP::start();
+
 
 	for (auto& [target, reset_pin]: BLCU::resets){
 		reset_pin.turn_on();
@@ -55,6 +60,10 @@ void BLCU::init(){
 	for (auto& [target, boot_pin]: BLCU::boots){
 		boot_pin.turn_off();
     }
+}
+
+void BLCU::update(){
+	STLIB::update();
 }
 
 void BLCU::setup_state_machine(){
@@ -68,7 +77,7 @@ void BLCU::setup_state_machine(){
 		//Enter actions
 		general_state_machine.add_enter_action([&](){
 			Time::set_timeout(max_tcp_connection_timeout, [&](){
-				if(not (tcp_socket->state == ServerSocket::ServerState::ACCEPTED )){
+				if(not (tcp->tcp_socket->state == ServerSocket::ServerState::ACCEPTED )){
 							tcp_timeout = true;
 				}
 			});
@@ -97,14 +106,14 @@ void BLCU::setup_state_machine(){
 
 		//Transitions
 		general_state_machine.add_transition(GeneralStates::INITIAL, GeneralStates::OPERATIONAL, [&](){
-			return tcp_socket->state == ServerSocket::ServerState::ACCEPTED;
+			return tcp->tcp_socket->state == ServerSocket::ServerState::ACCEPTED;
 		});
 		general_state_machine.add_transition(GeneralStates::INITIAL, GeneralStates::FAULT, [&](){
 			if(tcp_timeout) ErrorHandler("TCP connections could not be established in time and timed out");
 			return tcp_timeout;
 		});
 		general_state_machine.add_transition(GeneralStates::OPERATIONAL, GeneralStates::FAULT, [&](){
-			if(tcp_socket->state!= ServerSocket::ServerState::ACCEPTED){
+			if(tcp->tcp_socket->state!= ServerSocket::ServerState::ACCEPTED){
 				ErrorHandler("TCP connections fell");
 				return true;
 			}
@@ -124,8 +133,6 @@ void BLCU::setup_specific_state_machine(){
 
     //Enter actions
     specific_state_machine.add_enter_action([&](){
-        // boots[current_target].turn_off();
-        // resets[current_target].turn_off();
 		stop_booting();
         turn_on_all_boards();
         LED_OPERATIONAL.turn_on();
@@ -155,12 +162,58 @@ void BLCU::finish_write_read_order(bool error_ok){
 	BTFTP::off();
 
 		if(not error_ok){
-			BLCU::tcp_socket->send_order(nack);
-			__abort_booting();
+			tcp->tcp_socket->send_order(tcp->nack);
+			abort_booting();
 			return;
 		}else{
-			BLCU::tcp_socket->send_order(ack);
+			tcp->tcp_socket->send_order(tcp->ack);
 		}
 
-		BLCU::specific_state_machine.force_change_state(SpecificStates::READY);
+		specific_state_machine.force_change_state(SpecificStates::READY);
+}
+
+void BLCU::abort_booting(){
+	BLCU::programming_error = true;
+}
+
+void BLCU::send_to_bootmode(){
+	boots[current_target].turn_on();
+	resets[current_target].turn_off();
+	//igual hace falta meter un delay(por probar)
+	resets[current_target].turn_on();
+	boots[current_target].turn_off();
+}
+
+void BLCU::turn_off_all_boards(){
+	for (auto& [target, reset_pin]: resets)
+		{
+			reset_pin.turn_off();
+		}
+}
+
+void BLCU::turn_on_all_boards(){
+	for (auto& [target, reset_pin]: resets)
+		{
+			reset_pin.turn_on();
+		}
+}
+
+void BLCU::stop_booting(){
+	boots[current_target].turn_off();
+    resets[current_target].turn_off();
+
+}
+
+void BLCU::reset_all(){
+	for (auto& [target, reset]: resets)
+		{
+			reset.turn_off();
+		}
+
+		for (auto& [target, reset]: resets)
+		{
+			reset.turn_on();
+		}
+
+		HAL_NVIC_SystemReset();//Good bye :)
 }
