@@ -70,22 +70,22 @@ void* BTFTP::open(const char* fname, const char* mode, u8_t write){
 	}
 	printf("File opened in %s mode.\n", accepted_mode);
 
-	uint8_t version = 0x0;
+	// uint8_t version = 0x0;
 
-	if (not FDCB::get_version(version)){
-		//TODO: WARNING: Bootloader not respondig, unable to start read/write operation!
-		ErrorHandler("Bootloader not respondig, unable to start read/write operation!");
-		BLCU::finish_write_read_order(false);
-		return nullptr;
-	}
+	// if (not FDCB::get_version(version)){
+	// 	//TODO: WARNING: Bootloader not respondig, unable to start read/write operation!
+	// 	ErrorHandler("Bootloader not respondig, unable to start read/write operation!");
+	// 	BLCU::finish_write_read_order(false);
+	// 	return nullptr;
+	// }
 
-	if (version != FDCB_CURRENT_VERSION) {
-		//TODO: WARNING?
-		ErrorHandler("Mismatch in bootloader version, current version in host: 0x%X in target: 0x%X.", FDCB_CURRENT_VERSION, version);
-		// ErrorHandler("Mismatch in bootloader version, current version in host: 0x%X in target: 0x%X.", FDCB_CURRENT_VERSION, version);
-		BLCU::finish_write_read_order(false);
-		return nullptr;
-	}
+	// if (version != FDCB_CURRENT_VERSION) {
+	// 	//TODO: WARNING?
+	// 	ErrorHandler("Mismatch in bootloader version, current version in host: 0x%X in target: 0x%X.", FDCB_CURRENT_VERSION, version);
+	// 	// ErrorHandler("Mismatch in bootloader version, current version in host: 0x%X in target: 0x%X.", FDCB_CURRENT_VERSION, version);
+	// 	BLCU::finish_write_read_order(false);
+	// 	return nullptr;
+	// }
 
 	uint32_t address = FLASH_SECTOR0_START_ADDRESS;
 	BTFTP::BHandle* handle = new BTFTP::BHandle(string(fname), string(mode), write, address);
@@ -147,10 +147,10 @@ int BTFTP::write(void* handle, struct pbuf* p){
 		if (btftp_handle->current_sector > 5) {
 			return 1;
 		}else{
-			if (not FDCB::write_memory(btftp_handle->current_sector, btftp_handle->file->payload,(btftp_handle->file->pointer))) {
-				error_ok = false;
-				return -1;
-			}
+			// if (not FDCB::write_memory(btftp_handle->current_sector, btftp_handle->file->payload,(btftp_handle->file->pointer))) {
+			// 	error_ok = false;
+			// 	return -1;
+			// }
 			btftp_handle->file->pointer = 0;
 			btftp_handle->current_sector++;
 		}
@@ -165,10 +165,10 @@ int BTFTP::write(void* handle, struct pbuf* p){
 			btftp_handle->file->payload[btftp_handle->file->pointer] = 255;
 			btftp_handle->file->pointer++;
 		}
-		if (not FDCB::write_memory(btftp_handle->current_sector, btftp_handle->file->payload,btftp_handle->file->pointer)) {
-			error_ok = false;
-			return -1;
-		}
+		// if (not FDCB::write_memory(btftp_handle->current_sector, btftp_handle->file->payload,btftp_handle->file->pointer)) {
+		// 	error_ok = false;
+		// 	return -1;
+		// }
 		//Deberia de cambiar de estado aqui, para quitar de boot a la otra pagina
 		return 0;
 	}else{

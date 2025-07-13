@@ -13,11 +13,7 @@ int main(void) {
     SharedMemory::start();
 #endif
 
-
-
-  
-
-    BLCU board;
+    BLCU board{};
     board.init();
     
 
