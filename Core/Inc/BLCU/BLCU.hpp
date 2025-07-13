@@ -92,24 +92,3 @@
 
     };
 
-    // void set_up()
-    // {
-    //     BLCU::__set_up_peripherals();
-    //     BLCU::__set_up_state_machine();
-    //     ProtectionManager::link_state_machine(BLCU::general_state_machine, BLCU_ID);
-    //     BLCU::__set_up_protections();
-    // }
-
-    // void start(){
-    //     STLIB::start("00:80:e1:06:07:10",ip, mask, gateway, UART::uart2);
-    //     BLCU::__tcp_start();
-
-    // 	// BLCU::__resets_start();
-    //     // BLCU::__boots_start();
-    //     // BLCU::__leds_start();
-    // }
-
-    // void update(){
-    //     STLIB::update();
-    // }
-
