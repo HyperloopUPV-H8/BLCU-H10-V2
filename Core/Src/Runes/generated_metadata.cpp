@@ -5,11 +5,11 @@
 extern "C"{
     const char DESCRIPTION[255]  __attribute__((section(".metadata_pool")))= 
         "****************"  // placeholder for beggining
-        "20250624T153513"   // DateTime using ISO-8601 format
+        "20250713T175443"   // DateTime using ISO-8601 format
         " "                 // alignment
-        "f8e647d0"          // STLIB commit
+        "f73885a9"          // STLIB commit
         "--------"          // ADJ commit
-        "fa5dc1b1"          // Board commit
+        "e030ecf7"          // Board commit
         // the '=' is used for unparsing
         ;
 }
