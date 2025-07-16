@@ -1,15 +1,13 @@
 #include "BLCU/BLCU.hpp"
 
 
-BLCU::BLCU(){
+BLCU::BLCU(): general_state_machine(GeneralStates::INITIAL),
+specific_state_machine(SpecificStates::READY){
 //-------STATE MACHINE------//
     setup_state_machine();
 	setup_specific_state_machine();
 	general_state_machine.add_state_machine(specific_state_machine, GeneralStates::OPERATIONAL);
 	ProtectionManager::link_state_machine(BLCU::general_state_machine, BLCU_ID);
-	Time::register_low_precision_alarm(1, [&](){
-		general_state_machine.check_transitions();
-	});
 
 //-------FDCAN------//
 	fdcan = FDCAN::inscribe<
@@ -52,6 +50,10 @@ void BLCU::init(){
 	tcp = new Comms(this);
 	BTFTP::start();
 
+	Time::register_low_precision_alarm(1, [&](){
+		general_state_machine.check_transitions();
+	});
+
 
 	for (auto& [target, reset_pin]: BLCU::resets){
 		reset_pin.turn_on();
@@ -67,7 +69,6 @@ void BLCU::update(){
 }
 
 void BLCU::setup_state_machine(){
-        general_state_machine = {GeneralStates::INITIAL};
 		general_state_machine.add_state(GeneralStates::OPERATIONAL);
 		general_state_machine.add_state(GeneralStates::FAULT);
 
@@ -127,7 +128,6 @@ void BLCU::setup_state_machine(){
 }
 
 void BLCU::setup_specific_state_machine(){
-    specific_state_machine = StateMachine(SpecificStates::READY);
     specific_state_machine.add_state(SpecificStates::BOOTING);
 
 
@@ -153,23 +153,31 @@ void BLCU::setup_specific_state_machine(){
         LED_CAN.turn_off();
     }, SpecificStates::BOOTING);
 
+	specific_state_machine.add_transition(SpecificStates::READY, SpecificStates::BOOTING,[&](){
+		return ready_flag;
+	});
+
+	specific_state_machine.add_transition(SpecificStates::BOOTING, SpecificStates::READY,[&](){
+		return !ready_flag;
+	});
+
     //Cyclic actions
     general_state_machine.add_low_precision_cyclic_action([&](){LED_CAN.toggle();}, (chrono::milliseconds)75, SpecificStates::BOOTING);
 
 }
 
-void BLCU::finish_write_read_order(bool error_ok){
+void BLCU::finish_write_read_order(bool error_okey){
 	BTFTP::off();
+	ready_flag = true;
 
-		if(not error_ok){
-			tcp->tcp_socket->send_order(tcp->nack);
-			abort_booting();
-			return;
-		}else{
-			tcp->tcp_socket->send_order(tcp->ack);
-		}
+		// if(error_okey==false){
+		// 	tcp->tcp_socket->send_order(tcp->nack);
+		// 	abort_booting();
+		// 	return;
+		// }else{
+		// 	tcp->send_ack();
+		// }
 
-		specific_state_machine.force_change_state(SpecificStates::READY);
 }
 
 void BLCU::abort_booting(){

@@ -45,6 +45,8 @@
 
         bool programming_error = false;
 
+        
+
         void finish_write_read_order(bool error_ok);
         void turn_off_all_boards();
         void turn_on_all_boards();
@@ -81,8 +83,10 @@
         //PUBLIC VARIABLES:
         Target current_target;
         
-        StateMachine general_state_machine;
-        StateMachine specific_state_machine;
+        bool ready_flag = false;
+        bool booting_flag = false;
+        StateMachine general_state_machine{ GeneralStates::INITIAL };
+        StateMachine specific_state_machine{ SpecificStates::READY };
 
         static constexpr string ip{"192.168.0.27"};
         static constexpr string mask{"255.255.0.0"}; 
@@ -91,4 +95,5 @@
         
 
     };
+
 
