@@ -1,23 +1,36 @@
 #include "BLCU/BLCU.hpp"
 
+StateMachine BLCU::general_state_machine{ BLCU::GeneralStates::INITIAL };
+StateMachine BLCU::specific_state_machine{ BLCU::SpecificStates::READY };
+DigitalOutput BLCU::LED_OPERATIONAL;
+DigitalOutput BLCU::LED_FAULT;
+DigitalOutput BLCU::LED_CAN;
+DigitalOutput BLCU::LED_FLASH;
+DigitalOutput BLCU::LED_SLEEP;
+unordered_map<Target, DigitalOutput> BLCU::resets;
+unordered_map<Target, DigitalOutput> BLCU::boots;
+uint8_t BLCU::fdcan = 0;
+Target BLCU::current_target = NOTARGET;
+bool BLCU::ready_flag = false;	
+bool BLCU::tcp_timeout = false;
+bool BLCU::programming_error = false;
 
-BLCU::BLCU(): general_state_machine(GeneralStates::INITIAL),
-specific_state_machine(SpecificStates::READY){
-//-------STATE MACHINE------//
-    setup_state_machine();
+void BLCU::init(){
+	setup_state_machine();
 	setup_specific_state_machine();
 	general_state_machine.add_state_machine(specific_state_machine, GeneralStates::OPERATIONAL);
 	ProtectionManager::link_state_machine(BLCU::general_state_machine, BLCU_ID);
 
-//-------FDCAN------//
+	//FDCAN:
 	fdcan = FDCAN::inscribe<
 			CANBitRatesSpeed::CAN_1_Mbit,    
 			CANFormat::CAN_FDCAN_FORMAT,                
 			CANIdentifier::CAN_29_BIT_IDENTIFIER,      
 			CANMode::CAN_MODE_NORMAL              
 		>(FDCAN::fdcan1);
+	STLIB::start("00:80:e1:06:07:10",ip, mask, gateway, UART::uart2);
 
-//-------RESETS------//
+	//-------RESETS------//
 	resets[VCU] = DigitalOutput(PA12);
 	resets[HVSCU] = DigitalOutput(PG3);
 	resets[BCU] = DigitalOutput(PD11);
@@ -25,7 +38,7 @@ specific_state_machine(SpecificStates::READY){
 	resets[LCU] = DigitalOutput(PB12);
 	resets[PCU] = DigitalOutput(PG1);
 
-//-------BOOTS------//
+	//-------BOOTS------//
 	boots[VCU] = DigitalOutput(PA11);
 	boots[HVSCU] = DigitalOutput(PG2);
 	boots[BCU] = DigitalOutput(PD10);
@@ -33,21 +46,13 @@ specific_state_machine(SpecificStates::READY){
 	boots[LCU] = DigitalOutput(PE15);
 	boots[PCU] = DigitalOutput(PE7);
 
-	
-
-//-------LEDS------//
+	//-------LEDS------//
 	LED_OPERATIONAL = DigitalOutput(PG8);
 	LED_FAULT = DigitalOutput(PG7);
 	LED_CAN = DigitalOutput(PG6);
 	LED_FLASH = DigitalOutput(PG5);
 	LED_SLEEP = DigitalOutput(PG4);
 
-}
-
-void BLCU::init(){
-	STLIB::start("00:80:e1:06:07:10",ip, mask, gateway, UART::uart2);
-
-	tcp = new Comms(this);
 	BTFTP::start();
 
 	Time::register_low_precision_alarm(1, [&](){
@@ -78,7 +83,7 @@ void BLCU::setup_state_machine(){
 		//Enter actions
 		general_state_machine.add_enter_action([&](){
 			Time::set_timeout(max_tcp_connection_timeout, [&](){
-				if(not (tcp->tcp_socket->state == ServerSocket::ServerState::ACCEPTED )){
+				if(not (Comms::tcp_socket->state == ServerSocket::ServerState::ACCEPTED )){
 							tcp_timeout = true;
 				}
 			});
@@ -107,14 +112,14 @@ void BLCU::setup_state_machine(){
 
 		//Transitions
 		general_state_machine.add_transition(GeneralStates::INITIAL, GeneralStates::OPERATIONAL, [&](){
-			return tcp->tcp_socket->state == ServerSocket::ServerState::ACCEPTED;
+			return Comms::tcp_socket->state == ServerSocket::ServerState::ACCEPTED;
 		});
 		general_state_machine.add_transition(GeneralStates::INITIAL, GeneralStates::FAULT, [&](){
 			if(tcp_timeout) ErrorHandler("TCP connections could not be established in time and timed out");
 			return tcp_timeout;
 		});
 		general_state_machine.add_transition(GeneralStates::OPERATIONAL, GeneralStates::FAULT, [&](){
-			if(tcp->tcp_socket->state!= ServerSocket::ServerState::ACCEPTED){
+			if(Comms::tcp_socket->state!= ServerSocket::ServerState::ACCEPTED){
 				ErrorHandler("TCP connections fell");
 				return true;
 			}
@@ -170,13 +175,13 @@ void BLCU::finish_write_read_order(bool error_okey){
 	BTFTP::off();
 	ready_flag = true;
 
-		// if(error_okey==false){
-		// 	tcp->tcp_socket->send_order(tcp->nack);
-		// 	abort_booting();
-		// 	return;
-		// }else{
-		// 	tcp->send_ack();
-		// }
+		if(error_okey==false){
+			Comms::send_nack();
+			abort_booting();
+			return;
+		}else{
+			Comms::send_ack();
+		}
 
 }
 

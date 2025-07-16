@@ -1,21 +1,15 @@
 #include "BLCU/Comms.hpp"
-#include "BLCU/BLCU.hpp" 
+#include "BLCU/BLCU.hpp"
 
+ServerSocket* Comms::tcp_socket = nullptr;
 
-Comms* Comms::self = nullptr;
-
-Comms::Comms(BLCU* board): board(board){
-    self = this;
-    tcp_socket = new ServerSocket(board->ip, board->port);
-    write_program_order = new HeapOrder(700, cb_write_program, &board->current_target);
-    reset_all_order   = new HeapOrder(701, cb_reset_all);
-    read_program_order = new HeapOrder(702, cb_read_program, &board->current_target);
-
+void Comms::init(){
+    tcp_socket = new ServerSocket(BLCU::ip, BLCU::port);
+    write_program_order = new HeapOrder(700, Comms::write_program, &BLCU::current_target);
+    reset_all_order   = new HeapOrder(701, Comms::reset_all,   &BLCU::current_target);
+    read_program_order  = new HeapOrder(702, Comms::read_program,  &BLCU::current_target);
 }
 
-void Comms::cb_write_program() { self->write_program(); }
-void Comms::cb_reset_all()     { self->reset_all(); }
-void Comms::cb_read_program() { self->read_program(); }
 void Comms::send_ack() {
     tcp_socket->send_order(ack);
 }
@@ -25,11 +19,11 @@ void Comms::send_nack() {
 }
 
 void Comms::read_program(){
-    if(board->specific_state_machine.current_state != board->SpecificStates::READY){
+    if(BLCU::specific_state_machine.current_state != BLCU::SpecificStates::READY){
         send_nack();
         return;
     }
-    board->specific_state_machine.force_change_state(board->SpecificStates::BOOTING);
+    BLCU::specific_state_machine.force_change_state(BLCU::SpecificStates::BOOTING);
 
     BTFTP::on(BTFTP::Mode::READ);
 
@@ -37,11 +31,11 @@ void Comms::read_program(){
 }
 
 void Comms::write_program(){
-    if(board->specific_state_machine.current_state != board->SpecificStates::READY){
+    if(BLCU::specific_state_machine.current_state != BLCU::SpecificStates::READY){
         send_nack();
         return;
     }
-    board->booting_flag = false;
+    BLCU::ready_flag = false;
 
     BTFTP::on(BTFTP::Mode::WRITE);
 
@@ -49,43 +43,39 @@ void Comms::write_program(){
 }
 
 void Comms::erase_program(){
-    if(board->specific_state_machine.current_state != board->SpecificStates::READY){
+    if(BLCU::specific_state_machine.current_state != BLCU::SpecificStates::READY){
         send_nack();
         return;
     }
-    board->specific_state_machine.force_change_state(board->SpecificStates::BOOTING);
+    BLCU::specific_state_machine.force_change_state(BLCU::SpecificStates::BOOTING);
 
     if(not FDCB::erase_memory()){
         send_nack();
-        board->abort_booting();
+        BLCU::abort_booting();
         return;
     }else{
         send_ack();
     }
 
-    board->specific_state_machine.force_change_state(board->SpecificStates::READY);
+    BLCU::specific_state_machine.force_change_state(BLCU::SpecificStates::READY);
 }
 
 void Comms::get_version(){
-    if(board->specific_state_machine.current_state != board->SpecificStates::READY){
+    if(BLCU::specific_state_machine.current_state != BLCU::SpecificStates::READY){
         send_ack();
         return;
     }
-    board->specific_state_machine.force_change_state(board->SpecificStates::BOOTING);
+    BLCU::specific_state_machine.force_change_state(BLCU::SpecificStates::BOOTING);
 
     uint8_t temporal_value = 0;
     if (not FDCB::get_version(temporal_value)){
         send_nack();
-        board->abort_booting();
+        BLCU::abort_booting();
         return;
     }
 
     send_ack();
 
-    board->specific_state_machine.force_change_state(board->SpecificStates::READY);
-}
-
-void Comms::reset_all() {
-    board->reset_all();
+    BLCU::specific_state_machine.force_change_state(BLCU::SpecificStates::READY);
 }
 

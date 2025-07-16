@@ -12,88 +12,74 @@
 #include "FDCBootloader/BootloaderTFTP.hpp"
 #include "Comms.hpp"
 
-#define BLCU_ID         ((uint8_t)1)
+// Macro for BLCU id
+#define BLCU_ID ((uint8_t)1)
 
-    enum Target{
-		NOTARGET,
-		VCU,			//		    1
-		HVSCU,			//			2
-		BCU,			//			3
-		BMSL,			//			4
-		LCU,			//			5
-		PCU,			//          6
-		
-	};
-    class BLCU{
-        private:
-    
-        static constexpr uint16_t max_tcp_connection_timeout = 30000;
-    
-        unordered_map<Target, DigitalOutput> resets; 
-        unordered_map<Target, DigitalOutput> boots;
+enum Target {
+    NOTARGET,
+    VCU,    // 1
+    HVSCU,  // 2
+    BCU,    // 3
+    BMSL,   // 4
+    LCU,    // 5
+    PCU     // 6
+};
 
-        uint8_t fdcan;
-        DigitalOutput LED_OPERATIONAL;
-        DigitalOutput LED_FAULT;
-        DigitalOutput LED_CAN;
-        DigitalOutput LED_FLASH;
-        DigitalOutput LED_SLEEP;
+class BLCU {
+private:
+    BLCU() = delete;
 
-        
-        static ServerSocket* tcp_socket;//Hacer nullptr
-        bool tcp_timeout = false;
+    static constexpr uint16_t max_tcp_connection_timeout = 30000;
 
-        bool programming_error = false;
+    static unordered_map<Target, DigitalOutput> resets;
+    static unordered_map<Target, DigitalOutput> boots;
 
-        
+    static uint8_t fdcan;
+    static DigitalOutput LED_OPERATIONAL;
+    static DigitalOutput LED_FAULT;
+    static DigitalOutput LED_CAN;
+    static DigitalOutput LED_FLASH;
+    static DigitalOutput LED_SLEEP;
 
-        void finish_write_read_order(bool error_ok);
-        void turn_off_all_boards();
-        void turn_on_all_boards();
-        void send_to_bootmode();
-        void stop_booting();
+    static bool tcp_timeout;
+    static bool programming_error;
 
 
-        void setup_state_machine();
-        void setup_specific_state_machine();
+    static void finish_write_read_order(bool error_ok);
+    static void turn_off_all_boards();
+    static void turn_on_all_boards();
+    static void send_to_bootmode();
+    static void stop_booting();
 
-        Comms* tcp =nullptr;
+    static void setup_state_machine();
+    static void setup_specific_state_machine();
 
-        public:
-
-        enum GeneralStates{
-            INITIAL,
-            OPERATIONAL,
-            FAULT,
-        };
-    
-    
-        enum SpecificStates{
-            READY,
-            BOOTING,
-        };
-
-        BLCU();
-        void init();
-        void update();
-
-        void abort_booting();
-        void reset_all();
-
-        //PUBLIC VARIABLES:
-        Target current_target;
-        
-        bool ready_flag = false;
-        bool booting_flag = false;
-        StateMachine general_state_machine{ GeneralStates::INITIAL };
-        StateMachine specific_state_machine{ SpecificStates::READY };
-
-        static constexpr string ip{"192.168.0.27"};
-        static constexpr string mask{"255.255.0.0"}; 
-        static constexpr string gateway{"192.168.1.1"};
-        static constexpr uint32_t port{50500};
-        
-
+public:
+    enum GeneralStates {
+        INITIAL,
+        OPERATIONAL,
+        FAULT,
     };
+
+    enum SpecificStates {
+        READY,
+        BOOTING,
+    };
+
+    static void init();
+    static void update();
+    static void abort_booting();
+    static void reset_all();
+
+    static Target current_target;
+    static bool ready_flag;
+    static StateMachine general_state_machine;
+    static StateMachine specific_state_machine;
+
+    static constexpr string ip{"192.168.0.27"};
+    static constexpr string mask{"255.255.0.0"};
+    static constexpr string gateway{"192.168.1.1"};
+    static constexpr uint32_t port{50500};
+};
 
 
