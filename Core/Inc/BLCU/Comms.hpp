@@ -1,43 +1,29 @@
 #pragma once
 #include "ST-LIB.hpp"
+#include "BLCU/BLCU.hpp"  // Ensure BLCU is fully defined
 
-class BLCU;
-
-class Comms{
+class Comms {
 private:
-    static Comms* self; 
-    static void cb_write_program();    
-    static void cb_reset_all();
-    static void cb_read_program();
-    BLCU* board=nullptr;
-    HeapOrder* write_program_order=nullptr;
-    HeapOrder*  reset_all_order=nullptr;
-    // static HeapOrder* get_version_order;
-    HeapOrder* read_program_order;
-    // static HeapOrder* erase_program_order;
-
+    Comms() = delete;
 public:
-    Comms(BLCU* board);
+    static void init();
+    static ServerSocket* tcp_socket; 
 
-    ServerSocket* tcp_socket=nullptr;
-
-    void read_program();
-    void reset_all();
-    void get_version();
-    void write_program();
-    void erase_program();
-
-    void send_ack();
-    void send_nack();
+    inline static HeapOrder* write_program_order=nullptr; 
+    inline static HeapOrder* reset_all_order=nullptr;
+    inline static HeapOrder* read_program_order=nullptr;
     
-    HeapOrder ack = {
-        3,
-    };
-    
-    HeapOrder nack = {
-        4,
-    };
+    static void read_program();
+    static void reset_all();
+    static void get_version();
+    static void write_program();
+    static void erase_program();
 
+    static void send_ack();
+    static void send_nack();
+    
+    inline static HeapOrder ack = HeapOrder(3);
+    inline static HeapOrder nack = HeapOrder(4);
 };
 
 
