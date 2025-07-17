@@ -5,9 +5,8 @@ ServerSocket* Comms::tcp_socket = nullptr;
 
 void Comms::init(){
     tcp_socket = new ServerSocket(BLCU::ip, BLCU::port);
-    write_program_order = new HeapOrder(700, Comms::write_program, &BLCU::current_target);
-    reset_all_order   = new HeapOrder(701, Comms::reset_all,   &BLCU::current_target);
-    read_program_order  = new HeapOrder(702, Comms::read_program,  &BLCU::current_target);
+    write_program_order = new HeapOrder(700, &Comms::write_program, &BLCU::current_target);
+    reset_all_order   = new HeapOrder(701, &BLCU::reset_all);
 }
 
 void Comms::send_ack() {
@@ -35,7 +34,7 @@ void Comms::write_program(){
         send_nack();
         return;
     }
-    BLCU::ready_flag = false;
+    BLCU::specific_state_machine.force_change_state(BLCU::SpecificStates::BOOTING);
 
     BTFTP::on(BTFTP::Mode::WRITE);
 

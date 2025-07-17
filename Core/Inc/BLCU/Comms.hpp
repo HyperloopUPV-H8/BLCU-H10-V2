@@ -14,7 +14,6 @@ public:
     inline static HeapOrder* read_program_order=nullptr;
     
     static void read_program();
-    static void reset_all();
     static void get_version();
     static void write_program();
     static void erase_program();

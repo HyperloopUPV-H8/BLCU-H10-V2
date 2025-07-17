@@ -19,7 +19,6 @@ void BLCU::init(){
 	setup_state_machine();
 	setup_specific_state_machine();
 	general_state_machine.add_state_machine(specific_state_machine, GeneralStates::OPERATIONAL);
-	ProtectionManager::link_state_machine(BLCU::general_state_machine, BLCU_ID);
 
 	//FDCAN:
 	fdcan = FDCAN::inscribe<
@@ -28,7 +27,6 @@ void BLCU::init(){
 			CANIdentifier::CAN_29_BIT_IDENTIFIER,      
 			CANMode::CAN_MODE_NORMAL              
 		>(FDCAN::fdcan1);
-	STLIB::start("00:80:e1:06:07:10",ip, mask, gateway, UART::uart2);
 
 	//-------RESETS------//
 	resets[VCU] = DigitalOutput(PA12);
@@ -52,6 +50,10 @@ void BLCU::init(){
 	LED_CAN = DigitalOutput(PG6);
 	LED_FLASH = DigitalOutput(PG5);
 	LED_SLEEP = DigitalOutput(PG4);
+
+	STLIB::start("00:80:e1:06:07:10",ip, mask, gateway, UART::uart2);
+
+	Comms::init();
 
 	BTFTP::start();
 
@@ -129,7 +131,7 @@ void BLCU::setup_state_machine(){
 		//Cyclic actions
 		general_state_machine.add_low_precision_cyclic_action([&](){LED_OPERATIONAL.toggle();}, (chrono::milliseconds)150, INITIAL);
 
-		// general_state_machine.add_low_precision_cyclic_action(ProtectionManager::check_protections, (chrono::milliseconds)1 , OPERATIONAL);
+		general_state_machine.add_low_precision_cyclic_action(ProtectionManager::check_protections, (chrono::milliseconds)1 , OPERATIONAL);
 }
 
 void BLCU::setup_specific_state_machine(){
@@ -173,7 +175,7 @@ void BLCU::setup_specific_state_machine(){
 
 void BLCU::finish_write_read_order(bool error_okey){
 	BTFTP::off();
-	ready_flag = true;
+	specific_state_machine.force_change_state(BOOTING);
 
 		if(error_okey==false){
 			Comms::send_nack();
