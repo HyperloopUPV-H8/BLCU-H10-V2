@@ -8,8 +8,6 @@
 
 #include "FDCBootloader/BootloaderTFTP.hpp"
 
-//#ifdef HAL_ETH_MODULE_ENABLED
-//Variables:
 namespace BLCU {
 	extern void finish_write_read_order(bool error_ok);
 }
@@ -175,4 +173,3 @@ void BTFTP::re(void* handle){
 }
 
 
-//#endif
