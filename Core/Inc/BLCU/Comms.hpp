@@ -11,7 +11,8 @@ public:
 
     inline static HeapOrder* write_program_order=nullptr; 
     inline static HeapOrder* reset_all_order=nullptr;
-    inline static HeapOrder* read_program_order=nullptr;
+    //More orders to be added, for now there is only the usefull ones :)
+    //inline static HeapOrder* read_program_order=nullptr;
     
     static void read_program();
     static void get_version();
