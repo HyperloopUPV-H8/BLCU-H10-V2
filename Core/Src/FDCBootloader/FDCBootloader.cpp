@@ -1,10 +1,3 @@
- /**
-  * Bootloader.hpp
-  *
-  *  Created on: Jan 21, 2022
-  *      Author: Pablo
-  */
-
 #include "FDCBootloader/FDCBootloader.hpp"
 
 uint8_t FDCB::fdcan = 0;
@@ -22,8 +15,8 @@ bool FDCB::get_version(uint8_t& version){
 		data.at(i) = 0xDE;
 	}
 	FDCAN::Packet packet = FDCAN::Packet();
-	// version = 0;
-	const char* data_ptr = reinterpret_cast<const char*>(data.data());  // Cast to const char*
+	
+	const char* data_ptr = reinterpret_cast<const char*>(data.data()); 
 	if (not FDCAN::transmit(FDCB::fdcan, FDCB::GET_VERSION, data_ptr, FDCAN::DLC::BYTES_64)){
 		return false;
 	}
@@ -53,7 +46,7 @@ bool FDCB::read_memory(uint8_t sector, uint8_t* data){
 	uint32_t index, counter;
 
 	tx_data.at(0) = sector;
-	const char* tx_data_ptr = reinterpret_cast<const char*>(tx_data.data());  // Cast to const char*
+	const char* tx_data_ptr = reinterpret_cast<const char*>(tx_data.data()); 
 	FDCAN::transmit(FDCB::fdcan, FDCB::READ_MEMORY, tx_data_ptr, FDCAN::DLC::BYTES_64);
 
 	if (not __wait_for_ack(FDCB::READ_MEMORY, packet)) {
@@ -104,7 +97,7 @@ bool FDCB::write_memory(uint8_t sector, uint8_t* data, uint32_t max_pointer){
 	tx_data.at(2) = max_pointer >> 16;
 	tx_data.at(3) = max_pointer >> 8;
 	tx_data.at(4) = max_pointer;
-	const char* tx_data_ptr = reinterpret_cast<const char*>(tx_data.data());  // Cast to const char*
+	const char* tx_data_ptr = reinterpret_cast<const char*>(tx_data.data()); 
 	FDCAN::transmit(FDCB::fdcan, FDCB::WRITE_MEMORY, tx_data_ptr, FDCAN::DLC::BYTES_64);
 	uint32_t aux_max_pointer = max_pointer/64;
 
@@ -153,7 +146,7 @@ bool FDCB::erase_memory(){
 	data.at(0) = 0;
 	data.at(1) = 6;
 
-	const char* data_ptr = reinterpret_cast<const char*>(data.data());  // Cast to const char*
+	const char* data_ptr = reinterpret_cast<const char*>(data.data()); 
 	FDCAN::transmit(FDCB::fdcan, FDCB::ERASE_MEMORY, data_ptr, FDCAN::DLC::BYTES_64);
 
 	if (not __wait_for_ack(FDCB::ERASE_MEMORY, packet)) {
@@ -206,14 +199,14 @@ bool FDCB::__wait_for_ack(uint8_t order, FDCAN::Packet& packet){
 bool FDCB::__send_ack(uint8_t order){
 	vector<uint8_t> data = vector<uint8_t>(64);
 	data.at(0) = FDCB_ACK;
-	const char* data_ptr = reinterpret_cast<const char*>(data.data());  // Cast to const char*
+	const char* data_ptr = reinterpret_cast<const char*>(data.data()); 
 	return FDCAN::transmit(FDCB::fdcan, order, data_ptr, FDCAN::DLC::BYTES_64);
 }
 
 bool FDCB::__send_nack(uint8_t order){
 	vector<uint8_t> data = vector<uint8_t>(64);
 	data.at(0) = FDCB_NACK;
-	const char* data_ptr = reinterpret_cast<const char*>(data.data());  // Cast to const char*
+	const char* data_ptr = reinterpret_cast<const char*>(data.data());  
 	return FDCAN::transmit(FDCB::fdcan, order, data_ptr, FDCAN::DLC::BYTES_64);
 }
 
@@ -233,12 +226,10 @@ bool FDCB::__wait_for_bootloader_message(){
      }
 
      Time::unregister_low_precision_alarm(id);
-     //TODO:: Warning timeout
      return false;
 }
 
 void FDCB::__copy_data_from_packet(FDCAN::Packet& packet, uint8_t* data){
-	//memcpy(data, &packet.rx_data[0], 64);
 
 	uint8_t i;
 	for (i = 0; i < 64; ++i) {
