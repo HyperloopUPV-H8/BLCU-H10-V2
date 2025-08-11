@@ -18,9 +18,11 @@ bool BLCU::programming_error = false;
 void BLCU::init(){
 	setup_state_machine();
 	setup_specific_state_machine();
-	general_state_machine.add_state_machine(specific_state_machine, GeneralStates::OPERATIONAL);
+	
+	//add nested state machine to main state machine
+	general_state_machine.add_state_machine(specific_state_machine, GeneralStates::OPERATIONAL); 
 
-	//FDCAN:
+	//-------FDCAN------//
 	fdcan = FDCAN::inscribe<
 			CANBitRatesSpeed::CAN_1_Mbit,    
 			CANFormat::CAN_FDCAN_FORMAT,                
@@ -194,7 +196,7 @@ void BLCU::abort_booting(){
 void BLCU::send_to_bootmode(){
 	boots[current_target].turn_on();
 	resets[current_target].turn_off();
-	//igual hace falta meter un delay(por probar)
+	//igual hace falta meter un delay(por testear)
 	resets[current_target].turn_on();
 	boots[current_target].turn_off();
 }
