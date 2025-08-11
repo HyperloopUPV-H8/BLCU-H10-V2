@@ -1,10 +1,3 @@
-/*
- * BootloaderTFTP.cpp
- *
- *  Created on: 21 feb. 2022
- *      Author: Pablo
- */
-
 
 #include "FDCBootloader/BootloaderTFTP.hpp"
 
@@ -47,7 +40,6 @@ void BTFTP::start(){
 	}
 	BTFTP::on(BTFTP::Mode::WRITE);
 
-	//TODO: Remove debug print
 }
 
 //Private:
