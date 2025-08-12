@@ -1,12 +1,3 @@
-/*
- * BootloaderTFTP.hpp
- *
- *  Created on: 21 feb. 2022
- *      Author: Pablo
- */
-
-
-
 #pragma once
 
 #include "C++Utilities/CppUtils.hpp"
@@ -15,7 +6,6 @@
 #include "FDCBootloader/FDCBootloader.hpp"
 #include "ST-LIB.hpp"
 
-//#ifdef HAL_ETH_MODULE_ENABLED
 
 #define TFTP_MAX_DATA_SIZE 					 ((uint16_t)512U)
 
