@@ -1,12 +1,4 @@
-/*
- * Bootloader.hpp
- *
- *  Created on: Jan 21, 2022
- *      Author: Pablo
- */
-
 #pragma once
-//#undef HAL_ETH_MODULE_ENABLED
 
 #include "ST-LIB.hpp"
 #include "C++Utilities/CppUtils.hpp"
@@ -53,7 +45,6 @@ public:
 
 	static bool get_version(uint8_t& version);
 
-	//Data tiene que tener 131072 bytes alocados
 	static bool read_memory(uint8_t sector, uint8_t* data);
 
 	static bool write_memory(uint8_t sector, uint8_t* data, uint32_t max_pointer);
