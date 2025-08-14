@@ -1,10 +1,3 @@
-/**
- * BLCU.h
- *
- *  Created on: Feb 3, 2023
- *      Author: Pablo
- */
-
 #pragma once
 
 #include "ST-LIB.hpp"
@@ -12,17 +5,17 @@
 #include "FDCBootloader/BootloaderTFTP.hpp"
 #include "Comms.hpp"
 
-// Macro for BLCU id
+
 #define BLCU_ID ((uint8_t)1)
 
 enum Target {
     NOTARGET,
-    VCU,    // 1
-    HVSCU,  // 2
-    BCU,    // 3
-    BMSL,   // 4
-    LCU,    // 5
-    PCU     // 6
+    VCU,    
+    HVSCU,  
+    BCU,    
+    BMSL,   
+    LCU,    
+    PCU     
 };
 
 class BLCU {
